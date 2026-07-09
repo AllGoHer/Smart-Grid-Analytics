@@ -90,7 +90,25 @@ python:
         producer.send('smartgrid', data)
         producer.flush()
 
+________________________________________________________________________________________________________________________________________________________________________________________________________________
+## 📊 Capa de Procesamiento con Flink
+________________________________________________________________________________________________________________________________________________________________________________________________________________
 
+### Arquitectura Multi-Capa (Medallion)
+
+El proyecto implementa la arquitectura Medallion (Bronce → Plata → Oro), un estándar en Data Engineering:
+
+| Capa | Propósito | Operaciones |
+|------|-----------|-------------|
+| Bronze | Ingestion de datos crudos | Lectura desde Kafka, almacenamiento en tabla staging |
+| Silver | Limpieza y validación | Filtrado de datos inválidos, tipado correcto, deduplicación |
+| Gold | Agregaciones y star schema | Ventanas temporales, cálculos agregados, SCD Type 2 |
+
+________________________________________________________________________________________________________________________________________________________________________________________________________________
+## ⚡ Procesamiento en Tiempo Real
+________________________________________________________________________________________________________________________________________________________________________________________________________________
+
+SQL de la capa Gold :
 ![image]()
 
 ![image]()
