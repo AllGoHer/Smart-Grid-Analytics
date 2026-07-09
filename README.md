@@ -14,7 +14,7 @@ Una solución end-to-end de procesamiento de datos para smart grids, diseñada p
 
 ________________________________________________________________________________________________________________________________________________________________________________________________________________
 ## 🎯 Visión General
-
+________________________________________________________________________________________________________________________________________________________________________________________________________________
 Smart Grid V2 es una plataforma completa de análisis de datos que simula el procesamiento de datos de una red eléctrica inteligente en tiempo real. El proyecto implementa una arquitectura de datos moderna que cubre todo el ciclo de vida de los datos: ingesta, procesamiento, almacenamiento y visualización. 
 
 ________________________________________________________________________________________________________________________________________________________________________________________________________________
@@ -32,7 +32,7 @@ ________________________________________________________________________________
 ________________________________________________________________________________________________________________________________________________________________________________________________________________
 El producer simula el comportamiento de miles de medidores inteligentes, generando datos de red eléctrica de forma continua y realista . Fue desarrollado siguiendo el principio de mínima fricción: no realiza procesamiento, solo captura y publica datos brutos para mantener la fidelidad con un escenario de sensores reales .
 ________________________________________________________________________________________________________________________________________________________________________________________________________________
-📊 Estructura de Datos Generados
+## 📊 Estructura de Datos Generados
 ________________________________________________________________________________________________________________________________________________________________________________________________________________
 json:
 
@@ -45,11 +45,50 @@ json:
         "electricity_price_gbp_per_kwh": 0.15 // Precio de electricidad
       }
 
+________________________________________________________________________________________________________________________________________________________________________________________________________________
+## 🔧 Patrón de Producción
+________________________________________________________________________________________________________________________________________________________________________________________________________________
+El producer funciona con una lógica de generación periódica, típica en sistemas de smart metering :
 
+python:
 
+    def generate_meter_data(device_id):
+        """Genera una lectura de medidor inteligente con variaciones realistas."""
+        base_load = 10.0 + (device_id % 5) * 2  # Carga base por dispositivo
+        load_variation = random.uniform(-0.5, 0.5)  # Variación simulada
+        return {
+            'device_id': device_id,
+            'load': base_load + load_variation,
+            'solar': 5.0 + random.uniform(-0.5, 0.5),
+            'fault': random.choices([0, 1, 2], weights=[0.95, 0.04, 0.01])[0],
+            'temperature': 25.0 + random.uniform(-2, 2)
+        }
+________________________________________________________________________________________________________________________________________________________________________________________________________________
+## 📈 Escalabilidad y Realismo
+________________________________________________________________________________________________________________________________________________________________________________________________________________
+El diseño del producer permite :
 
+Generación paralela: Múltiples workers para simular dispositivos a escala
 
+Datos realistas: Variaciones temporales y estacionales
 
+Comportamiento de sensores: Cada dispositivo tiene un comportamiento consistente
+
+Frecuencia configurable: Tasa de producción ajustable
+________________________________________________________________________________________________________________________________________________________________________________________________________________
+## 🔄 Integración con Kafka
+________________________________________________________________________________________________________________________________________________________________________________________________________________
+El producer publica directamente en un tópico Kafka sin procesar los datos, manteniendo la separación de responsabilidades :
+
+python:
+
+    def publish_to_kafka(data):
+        producer = KafkaProducer(
+            bootstrap_servers='kafka:9092',
+            value_serializer=lambda v: json.dumps(v).encode('utf-8')
+        )
+        producer.send('smartgrid', data)
+        producer.flush()
 
 
 ![image]()
