@@ -297,39 +297,225 @@ ________________________________________________________________________________
 
 ![image](https://github.com/user-attachments/assets/6899e215-ff6d-47db-b4f9-5444cb96a8e3)
 ____________________________________________________________________________________________________________________________________________________________________________________________________________________________
-![image]()
+## 🎯 Lo que este Proyecto Demuestra
+____________________________________________________________________________________________________________________________________________________________________________________________________________________________
 
-![image]()
+🧠 **Data Engineering**
+  
+✅ Arquitectura de datos moderna con pipeline end-to-end 
 
-![image]()
+✅ Procesamiento de streams en tiempo real con Flink
 
-![image]()
+✅ Modelo de datos dimensional (Star Schema)
 
-![image]()
+✅ SCD Type 2 para gestión de cambios históricos
 
-![image]()
+✅ Visualización de alto impacto con KPIs y dashboards
 
-![image]()
+✅ Infraestructura como código con Docker Compose
 
-![image]()
+✅ Simulación de sensores realista a escala 
 
-![image]()
+📈 **Data Science**
+  
+✅ Datos estructurados listos para modelado
 
-![image]()
+✅ Métricas de eficiencia y patrones de consumo
 
-![image]()
+✅ Correlaciones temporales (demanda vs temperatura)
 
-![image]()
+✅ Historial de precios para análisis predictivo
 
-![image]()
+____________________________________________________________________________________________________________________________________________________________________________________________________________________________
+## 🤝 Contribuciones
+____________________________________________________________________________________________________________________________________________________________________________________________________________________________
 
-![image]()
+**¡Las contribuciones son bienvenidas!** Áreas de mejora:
 
-![image]()
+🔄 Más métricas en tiempo real
 
-![image]()
+🧠 Modelos ML para predicción de demanda
 
-![image]()
+🌐 Escalabilidad con Kubernetes
+
+📈 Alertas y notificaciones
+
+🔍 Data quality con Great Expectations
+____________________________________________________________________________________________________________________________________________________________________________________________________________________________
+### 📄 Licencia
+____________________________________________________________________________________________________________________________________________________________________________________________________________________________
+MIT License - ver archivo LICENSE para detalles.
+____________________________________________________________________________________________________________________________________________________________________________________________________________________________
+## 📬 Contacto
+____________________________________________________________________________________________________________________________________________________________________________________________________________________________
+🎓 Autor: <MARK>**ALLAN GONZALES HEREDIA**</MARK>
+
+📧 Correo: Allgoher007@gmail.com
+
+📌 LinkedIn: https://www.linkedin.com/in/allan-gonzales-heredia-13a557b5/
+
+____________________________________________________________________________________________________________________________________________________________________________________________________________________________
+
+### **¡Gracias por visitar el proyecto! Si te gusta, dale ⭐ y compártelo. 🚀**
+____________________________________________________________________________________________________________________________________________________________________________________________________________________________
+
+## 🔥 DESARROLLO DEL PROYECTO 🔥
+____________________________________________________________________________________________________________________________________________________________________________________________________________________________
+
+1. Crear el proyecto y descargar JARs
+
+bash:
+
+      # Crear estructura de carpetas
+      mkdir -p Smart_Grid_V2/{producer,flink-sql,postgres,flink-jars}
+      cd Smart_Grid_V2
+
+**Descargar JARs**
+
+bash:
+
+      cd flink-jars
+      curl -L -o flink-sql-connector-kafka-1.17.1.jar https://repo1.maven.org/maven2/org/apache/flink/flink-sql-connector-kafka/1.17.1/flink-sql-connector-kafka-1.17.1.jar
+      curl -L -o flink-connector-jdbc-1.16.0.jar https://repo1.maven.org/maven2/org/apache/flink/flink-connector-jdbc/1.16.0/flink-connector-jdbc-1.16.0.jar
+      curl -L -o postgresql-42.7.1.jar https://jdbc.postgresql.org/download/postgresql-42.7.1.jar
+      cd ..
+
+![image](https://github.com/user-attachments/assets/38dbfc4c-cdb9-4717-86f4-b3f51a308c34)
+
+
+2. Instalar dependencias del productor
+
+bash:
+
+      python -m pip install kafka-python six
+
+![image](https://github.com/user-attachments/assets/76d4051c-56fe-4a34-8598-15369b465e7e)
+
+3. Levantar la infraestructura
+   
+bash:
+
+      docker-compose up -d
+
+![image](https://github.com/user-attachments/assets/19339169-7576-44b9-97f6-b21ed44ab455)
+
+![image](https://github.com/user-attachments/assets/36f205f8-abd1-438f-ac91-4d3f8f21a4e8)
+
+4. Crear el topic en Kafka
+   
+bash:
+
+      docker exec smart_grid_kafka /opt/kafka/bin/kafka-topics.sh --create --topic smartgrid --bootstrap-server localhost:9092 --partitions 3 --replication-factor 1
+
+
+![image](https://github.com/user-attachments/assets/a0df7582-fd8d-41e0-9868-9e2eaf394291)
+
+5. Ejecutar el productor (Terminal 1)
+   
+bash:
+
+      cd producer
+      python smart_grid_producer.py
+
+
+![image](https://github.com/user-attachments/assets/6bd46c42-61cd-4811-b54f-2109fa0eea77)
+
+![image](https://github.com/user-attachments/assets/b8e558b7-caf5-40b6-9d92-6960d2b69b3a)
+
+6. Ejecutar Flink SQL - Capa Bronze (Terminal 2)
+   
+bash:
+
+      docker exec -it smart_grid_flink_jobmanager bash -c "cd /opt/flink && ./bin/sql-client.sh -f /opt/flink/usrlib-sql/01_bronze_table.sql -j /opt/flink/lib/extra/flink-sql-connector-kafka-1.17.1.jar -j      /opt/flink/lib/extra/flink-connector-jdbc-1.16.0.jar -j /opt/flink/lib/extra/postgresql-42.7.1.jar"
+
+
+![image](https://github.com/user-attachments/assets/3a5245e9-6a30-4654-addd-fb7078c6c96f)
+
+![image](https://github.com/user-attachments/assets/3fe66de0-ebb3-42ea-81fe-22c23189fe5e)
+
+
+7. Ejecutar Flink SQL - Capa Silver (Terminal 3)
+   
+bash:
+
+      docker exec -it smart_grid_flink_jobmanager bash -c "cd /opt/flink && ./bin/sql-client.sh -f /opt/flink/usrlib-sql/02_silver_table.sql -j /opt/flink/lib/extra/flink-sql-connector-kafka-1.17.1.jar -j /opt/flink/lib/extra/flink-connector-jdbc-1.16.0.jar -j /opt/flink/lib/extra/postgresql-42.7.1.jar"
+
+
+![image](https://github.com/user-attachments/assets/aa1b20e6-6e87-416b-9482-b1cd78eaee6a)
+
+![image](https://github.com/user-attachments/assets/3a601b57-fa33-4415-b98f-2f658771e11c)
+
+8. Ejecutar Flink SQL - Capa Gold (Terminal 4)
+
+
+bash:
+
+      docker exec -it smart_grid_flink_jobmanager bash -c "cd /opt/flink && ./bin/sql-client.sh -f /opt/flink/usrlib-sql/03_gold_table.sql -j /opt/flink/lib/extra/flink-sql-connector-kafka-1.17.1.jar -j /opt/flink/lib/extra/flink-connector-jdbc-1.16.0.jar -j /opt/flink/lib/extra/postgresql-42.7.1.jar"
+
+
+![image](https://github.com/user-attachments/assets/42561884-70df-46f2-abac-c15a999fb6ab)
+
+![image](https://github.com/user-attachments/assets/269b3504-c0a1-43a3-9450-ff64a4ee7743)
+
+____________________________________________________________________________________________________________________________________________________________________________________________________________________________
+**📊 PASO 9: Verificación de Datos**
+
+bash:
+
+      docker exec -it smart_grid_postgres psql -U admin -d smartgrid
+
+
+sql:
+
+     -- Ver todas las tablas
+      \dt
+
+![image](https://github.com/user-attachments/assets/905f6f6a-735b-41be-a582-94aa0599fb23)
+
+#### Capa Bronze
+
+sql:
+
+     SELECT COUNT(*) FROM bronze_raw_data;
+
+
+![image](https://github.com/user-attachments/assets/fca39cae-850f-4943-bdea-6883bbe204a5)
+
+#### Capa Silver
+
+sql:
+
+     SELECT COUNT(*) FROM silver_validated_data;
+
+
+![image](https://github.com/user-attachments/assets/95d1d7d4-eae3-473c-b44d-d412881b9863)
+
+#### Capa Gold (Fact Table)
+
+sql:
+
+     SELECT * FROM fact_grid_metrics ORDER BY aggregated_timestamp DESC LIMIT 5;
+
+#### SCD Type 2 (Precios)
+
+sql:
+
+     SELECT * FROM dim_price WHERE is_current = TRUE;
+
+
+![image](https://github.com/user-attachments/assets/06b3a976-173c-4b97-97db-8f80b07450da)
+
+#### Dimensión Tiempo
+
+sql:
+
+     SELECT * FROM dim_time LIMIT 5;
+
+#### Verificación en APACHE FLINK Web Dashboard.
+
+![image](https://github.com/user-attachments/assets/f2d3b804-1d6b-4855-a903-05940b8606a8)
+
+
 
 ![image]()
 
