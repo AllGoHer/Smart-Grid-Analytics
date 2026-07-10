@@ -108,7 +108,190 @@ ________________________________________________________________________________
 ## ⚡ Procesamiento en Tiempo Real
 ________________________________________________________________________________________________________________________________________________________________________________________________________________
 
-SQL de la capa Gold :
+**SQL de la capa Gold :**
+
+SQL:
+
+     INSERT INTO fact_sink
+     SELECT
+         AVG(power_kw) AS avg_power_kw,
+         SUM(solar_kw) AS total_solar_generated,
+         MAX(fault_num) AS max_fault_num,
+         COUNT(*) AS event_count,
+         window_start AS aggregated_timestamp,
+         1 AS time_id,
+         1 AS location_id,
+         1 AS price_id
+     FROM TABLE(
+         TUMBLE(TABLE kafka_source, DESCRIPTOR(event_time), INTERVAL '1' MINUTE)
+     )
+     GROUP BY window_start;
+
+____________________________________________________________________________________________________________________________________________________________________________________________________________________________
+## 📈 Métricas Calculadas
+____________________________________________________________________________________________________________________________________________________________________________________________________________________________
+
+| KPI | Fórmula | Significado |
+|-----|---------|-------------|
+| avg_power_kw | AVG(power_kw) | Potencia promedio demandada |
+| total_solar_generated | SUM(solar_kw) | Energía solar generada en el período |
+| max_fault_num | MAX(fault_num) | Pico de fallas detectadas |
+| event_count | COUNT(*) | Volumen de eventos procesados |
+
+____________________________________________________________________________________________________________________________________________________________________________________________________________________________
+## 🗄️ Modelo de Datos (Star Schema)
+____________________________________________________________________________________________________________________________________________________________________________________________________________________________
+**Dimensión Tiempo (SCD Type 0)**
+
+SQL:
+
+     CREATE TABLE dim_time (
+         time_id SERIAL PRIMARY KEY,
+         year INT,
+         month INT,
+         day INT,
+         hour INT,
+         minute INT,
+         day_of_week INT,
+         is_weekend BOOLEAN
+     );
+
+**Dimensión Precio (SCD Type 2)**
+
+Mantiene historial completo de cambios de precio:
+
+SQL:
+
+     CREATE TABLE dim_price (
+         price_value DOUBLE PRECISION,
+         effective_date TIMESTAMP(3),
+         expiry_date TIMESTAMP(3),
+         is_current BOOLEAN
+     );
+
+**Tabla de Hechos**
+
+SQL:
+
+     CREATE TABLE fact_grid_metrics (
+         fact_id SERIAL PRIMARY KEY,
+         avg_power_kw DOUBLE PRECISION,
+         total_solar_generated DOUBLE PRECISION,
+         max_fault_num INTEGER,
+         event_count BIGINT,
+         aggregated_timestamp TIMESTAMP(3) UNIQUE,
+         time_id INTEGER REFERENCES dim_time(time_id),
+         price_id INTEGER REFERENCES dim_price(price_id)
+     );
+
+____________________________________________________________________________________________________________________________________________________________________________________________________________________________
+## 📊 Visualización con Superset
+____________________________________________________________________________________________________________________________________________________________________________________________________________________________
+**KPIs de Alto Impacto**
+
+| KPI | Métrica | Visualización |
+|-----|---------|---------------|
+| ⚡ Potencia Promedio | AVG(avg_power_kw) | Big Number con tendencia |
+| ☀️ Energía Solar | SUM(total_solar_generated) | Big Number |
+| 🔴 Pico de Fallas | MAX(max_fault_num) | Big Number con alerta |
+| 🎯 Eficiencia | Índice compuesto | Gauge Chart |
+
+**Dashboards Interactivos**
+
+El dashboard incluye :
+
+* Filtros por rango de tiempo
+
+* Análisis de correlaciones (demanda vs temperatura)
+
+* Mapa de calor de fallas por hora/día
+
+* Tablas detalladas con datos históricos
+
+____________________________________________________________________________________________________________________________________________________________________________________________________________________________
+## 🚀 Cómo Ejecutar
+____________________________________________________________________________________________________________________________________________________________________________________________________________________________
+
+**Requisitos Previos**
+
+bash:
+
+      # Docker y Docker Compose
+      docker --version
+      docker-compose --version
+
+      # Puerto 8088 para Superset
+      # Puerto 5432 para PostgreSQL
+      # Puerto 9092 para Kafka
+
+      
+**Levantar la Infraestructura**
+
+Bash:
+
+      # 1. Clonar el repositorio
+      git clone https://github.com/tuusuario/Smart_Grid_V2.git
+      cd Smart_Grid_V2
+
+      # 2. Iniciar todos los servicios
+      docker-compose up -d
+
+      # 3. Verificar que todo está corriendo
+      docker ps
+
+      # 4. Ejecutar el pipeline Gold
+      docker exec -it smart_grid_flink_jobmanager bash -c \
+        "cd /opt/flink && ./bin/sql-client.sh \
+        -f /opt/flink/usrlib-sql/03_gold_simple.sql \
+        -j /opt/flink/lib/extra/flink-sql-connector-kafka-1.17.1.jar \
+        -j /opt/flink/lib/extra/flink-connector-jdbc-1.16.0.jar \
+        -j /opt/flink/lib/extra/postgresql-42.7.1.jar"
+
+
+**Enviar Datos de Prueba**
+
+bash:
+
+      docker exec -it smart_grid_kafka bash -c \
+        "cd /opt/kafka/bin && ./kafka-console-producer.sh \
+        --bootstrap-server localhost:9092 --topic smartgrid"
+
+Pega estos datos:
+
+json:
+
+      {"timestamp":1700000000,"power_kw":10.5,"solar_kw":5.2,"fault_num":0,"temperature_c":25.5,"electricity_price_gbp_per_kwh":0.15}
+      {"timestamp":1700000060,"power_kw":12.3,"solar_kw":6.1,"fault_num":1,"temperature_c":26.0,"electricity_price_gbp_per_kwh":0.16}
+      {"timestamp":1700000120,"power_kw":11.8,"solar_kw":5.8,"fault_num":0,"temperature_c":24.5,"electricity_price_gbp_per_kwh":0.15}
+
+____________________________________________________________________________________________________________________________________________________________________________________________________________________________
+**Ver Dashboard en Superset**
+
+1. Abre http://localhost:8088
+
+2. Usuario: admin / Contraseña: admin
+
+3. Conecta a la base de datos PostgreSQL.
+
+4. Crea los datasets desde fact_grid_metrics.
+
+5. Construye los dashboards.
+
+____________________________________________________________________________________________________________________________________________________________________________________________________________________________
+## 🛠️ Tecnologías Utilizadas
+____________________________________________________________________________________________________________________________________________________________________________________________________________________________
+
+| Capa | Tecnología | Versión | Propósito |
+|------|------------|---------|-----------|
+| Ingesta | Apache Kafka | 3.5.0 | Buffer de mensajería y streaming |
+| Procesamiento | Apache Flink | 1.17.1 | Procesamiento de streams y ETL |
+| Almacenamiento | PostgreSQL	15 | Data warehouse y tablas dimensionales |
+| Visualización | Apache Superset | 2.1.0	Dashboards y análisis interactivo |
+| Orquestación | Docker Compose | - | Contenedores y servicios |
+| Lenguaje | Python | 3.11 | Simulador de sensores |
+| Lenguaje | SQL | - | Procesamiento Flink y consultas |
+
+
 ![image]()
 
 ![image]()
