@@ -285,8 +285,8 @@ ________________________________________________________________________________
 |------|------------|---------|-----------|
 | Ingesta | Apache Kafka | 3.5.0 | Buffer de mensajería y streaming |
 | Procesamiento | Apache Flink | 1.17.1 | Procesamiento de streams y ETL |
-| Almacenamiento | PostgreSQL	15 | Data warehouse y tablas dimensionales |
-| Visualización | Apache Superset | 2.1.0	Dashboards y análisis interactivo |
+| Almacenamiento | PostgreSQL | 15 |  Data warehouse y tablas dimensionales |
+| Visualización | Apache Superset | 2.1.0 | Dashboards y análisis interactivo |
 | Orquestación | Docker Compose | - | Contenedores y servicios |
 | Lenguaje | Python | 3.11 | Simulador de sensores |
 | Lenguaje | SQL | - | Procesamiento Flink y consultas |
