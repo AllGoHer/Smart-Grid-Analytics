@@ -15,7 +15,7 @@ Una solución end-to-end de procesamiento de datos para smart grids, diseñada p
 ________________________________________________________________________________________________________________________________________________________________________________________________________________
 ## 🎯 Visión General
 ________________________________________________________________________________________________________________________________________________________________________________________________________________
-Smart Grid V2 es una plataforma completa de análisis de datos que simula el procesamiento de datos de una red eléctrica inteligente en tiempo real. El proyecto implementa una arquitectura de datos moderna que cubre todo el ciclo de vida de los datos: ingesta, procesamiento, almacenamiento y visualización. 
+Smart Grid Analytics es una plataforma completa de análisis de datos que simula el procesamiento de datos de una red eléctrica inteligente en tiempo real. El proyecto implementa una arquitectura de datos moderna que cubre todo el ciclo de vida de los datos: ingesta, procesamiento, almacenamiento y visualización. 
 
 ________________________________________________________________________________________________________________________________________________________________________________________________________________
 ## 🏗️ Arquitectura
