@@ -301,7 +301,7 @@ ________________________________________________________________________________
 ____________________________________________________________________________________________________________________________________________________________________________________________________________________________
 
 🧠 **Data Engineering**
-  
+__________________________________________________________________  
 ✅ Arquitectura de datos moderna con pipeline end-to-end 
 
 ✅ Procesamiento de streams en tiempo real con Flink
@@ -315,9 +315,9 @@ ________________________________________________________________________________
 ✅ Infraestructura como código con Docker Compose
 
 ✅ Simulación de sensores realista a escala 
-
+________________________________________________________________
 📈 **Data Science**
-  
+________________________________________________________________  
 ✅ Datos estructurados listos para modelado
 
 ✅ Métricas de eficiencia y patrones de consumo
@@ -341,10 +341,7 @@ ________________________________________________________________________________
 📈 Alertas y notificaciones
 
 🔍 Data quality con Great Expectations
-____________________________________________________________________________________________________________________________________________________________________________________________________________________________
-### 📄 Licencia
-____________________________________________________________________________________________________________________________________________________________________________________________________________________________
-MIT License - ver archivo LICENSE para detalles.
+
 ____________________________________________________________________________________________________________________________________________________________________________________________________________________________
 ## 📬 Contacto
 ____________________________________________________________________________________________________________________________________________________________________________________________________________________________
@@ -364,77 +361,82 @@ ________________________________________________________________________________
 
 1. Crear el proyecto y descargar JARs
 
-bash:
+  bash:
 
-      # Crear estructura de carpetas
-      mkdir -p Smart_Grid_V2/{producer,flink-sql,postgres,flink-jars}
-      cd Smart_Grid_V2
+        # Crear estructura de carpetas
+        mkdir -p Smart_Grid_V2/{producer,flink-sql,postgres,flink-jars}
+        cd Smart_Grid_V2
 
-**Descargar JARs**
+  **Descargar JARs**
 
-bash:
+  bash:
 
-      cd flink-jars
-      curl -L -o flink-sql-connector-kafka-1.17.1.jar https://repo1.maven.org/maven2/org/apache/flink/flink-sql-connector-kafka/1.17.1/flink-sql-connector-kafka-1.17.1.jar
-      curl -L -o flink-connector-jdbc-1.16.0.jar https://repo1.maven.org/maven2/org/apache/flink/flink-connector-jdbc/1.16.0/flink-connector-jdbc-1.16.0.jar
-      curl -L -o postgresql-42.7.1.jar https://jdbc.postgresql.org/download/postgresql-42.7.1.jar
-      cd ..
+        cd flink-jars
+        curl -L -o flink-sql-connector-kafka-1.17.1.jar https://repo1.maven.org/maven2/org/apache/flink/flink-sql-connector-kafka/1.17.1/flink-sql-connector-kafka-1.17.1.jar
+        curl -L -o flink-connector-jdbc-1.16.0.jar https://repo1.maven.org/maven2/org/apache/flink/flink-connector-jdbc/1.16.0/flink-connector-jdbc-1.16.0.jar
+        curl -L -o postgresql-42.7.1.jar https://jdbc.postgresql.org/download/postgresql-42.7.1.jar
+        cd ..
 
-![image](https://github.com/user-attachments/assets/38dbfc4c-cdb9-4717-86f4-b3f51a308c34)
+  ![image](https://github.com/user-attachments/assets/38dbfc4c-cdb9-4717-86f4-b3f51a308c34)
 
-
+____________________________________________________________________________________________________________________________________________________________________________________________________________________________
 2. Instalar dependencias del productor
 
-bash:
+  bash:
 
-      python -m pip install kafka-python six
+        python -m pip install kafka-python six
 
-![image](https://github.com/user-attachments/assets/76d4051c-56fe-4a34-8598-15369b465e7e)
+  ![image](https://github.com/user-attachments/assets/76d4051c-56fe-4a34-8598-15369b465e7e)
 
+___________________________________________________________________________________________________________________________________________________________________________________________________________________________
 3. Levantar la infraestructura
-   
-bash:
 
-      docker-compose up -d
+    bash:
 
-![image](https://github.com/user-attachments/assets/19339169-7576-44b9-97f6-b21ed44ab455)
+         docker-compose up -d
 
-![image](https://github.com/user-attachments/assets/36f205f8-abd1-438f-ac91-4d3f8f21a4e8)
+  ![image](https://github.com/user-attachments/assets/19339169-7576-44b9-97f6-b21ed44ab455)
 
+  ![image](https://github.com/user-attachments/assets/36f205f8-abd1-438f-ac91-4d3f8f21a4e8)
+
+____________________________________________________________________________________________________________________________________________________________________________________________________________________________
 4. Crear el topic en Kafka
    
-bash:
+    bash:
 
-      docker exec smart_grid_kafka /opt/kafka/bin/kafka-topics.sh --create --topic smartgrid --bootstrap-server localhost:9092 --partitions 3 --replication-factor 1
+          docker exec smart_grid_kafka /opt/kafka/bin/kafka-topics.sh --create --topic smartgrid --bootstrap-server localhost:9092 --partitions 3 --replication-factor 1
 
 
-![image](https://github.com/user-attachments/assets/a0df7582-fd8d-41e0-9868-9e2eaf394291)
+    ![image](https://github.com/user-attachments/assets/a0df7582-fd8d-41e0-9868-9e2eaf394291)
 
+____________________________________________________________________________________________________________________________________________________________________________________________________________________________
 5. Ejecutar el productor (Terminal 1)
    
-bash:
+    bash:
 
-      cd producer
-      python smart_grid_producer.py
-
-
-![image](https://github.com/user-attachments/assets/6bd46c42-61cd-4811-b54f-2109fa0eea77)
-
-![image](https://github.com/user-attachments/assets/b8e558b7-caf5-40b6-9d92-6960d2b69b3a)
-
-6. Ejecutar Flink SQL - Capa Bronze (Terminal 2)
-   
-bash:
-
-      docker exec -it smart_grid_flink_jobmanager bash -c "cd /opt/flink && ./bin/sql-client.sh -f /opt/flink/usrlib-sql/01_bronze_table.sql -j /opt/flink/lib/extra/flink-sql-connector-kafka-1.17.1.jar -j      /opt/flink/lib/extra/flink-connector-jdbc-1.16.0.jar -j /opt/flink/lib/extra/postgresql-42.7.1.jar"
+          cd producer
+          python smart_grid_producer.py
 
 
-![image](https://github.com/user-attachments/assets/3a5245e9-6a30-4654-addd-fb7078c6c96f)
+  ![image](https://github.com/user-attachments/assets/6bd46c42-61cd-4811-b54f-2109fa0eea77)
 
-![image](https://github.com/user-attachments/assets/3fe66de0-ebb3-42ea-81fe-22c23189fe5e)
+  ![image](https://github.com/user-attachments/assets/b8e558b7-caf5-40b6-9d92-6960d2b69b3a)
+
+____________________________________________________________________________________________________________________________________________________________________________________________________________________________
+### ![image](https://github.com/user-attachments/assets/2a4744d9-3b6c-4280-b1a9-c8bed7b89eda) 6. Ejecutar Flink SQL - Capa Bronze (Terminal 2)
+____________________________________________________________________________________________________________________________________________________________________________________________________________________________   
+   bash:
+
+         docker exec -it smart_grid_flink_jobmanager bash -c "cd /opt/flink && ./bin/sql-client.sh -f /opt/flink/usrlib-sql/01_bronze_table.sql -j /opt/flink/lib/extra/flink-sql-connector-kafka-1.17.1.jar -j      /opt/flink/lib/extra/flink-connector-jdbc-1.16.0.jar -j /opt/flink/lib/extra/postgresql-42.7.1.jar"
 
 
-7. Ejecutar Flink SQL - Capa Silver (Terminal 3)
+  ![image](https://github.com/user-attachments/assets/3a5245e9-6a30-4654-addd-fb7078c6c96f)
+
+  ![image](https://github.com/user-attachments/assets/3fe66de0-ebb3-42ea-81fe-22c23189fe5e)
+
+____________________________________________________________________________________________________________________________________________________________________________________________________________________________
+### ![image](https://github.com/user-attachments/assets/dc7a088c-7326-4080-bb4f-ae0e5fbd663c) 7. Ejecutar Flink SQL - Capa Silver (Terminal 3)
+____________________________________________________________________________________________________________________________________________________________________________________________________________________________
    
 bash:
 
@@ -445,8 +447,9 @@ bash:
 
 ![image](https://github.com/user-attachments/assets/3a601b57-fa33-4415-b98f-2f658771e11c)
 
-8. Ejecutar Flink SQL - Capa Gold (Terminal 4)
-
+____________________________________________________________________________________________________________________________________________________________________________________________________________________________
+### ![image](https://github.com/user-attachments/assets/0ce56bdd-6038-4c22-b6ae-6e714adb6c30) 8. Ejecutar Flink SQL - Capa Gold (Terminal 4)
+____________________________________________________________________________________________________________________________________________________________________________________________________________________________
 
 bash:
 
@@ -459,6 +462,7 @@ bash:
 
 ____________________________________________________________________________________________________________________________________________________________________________________________________________________________
 **📊 PASO 9: Verificación de Datos**
+____________________________________________________________________________________________________________________________________________________________________________________________________________________________
 
 bash:
 
@@ -515,12 +519,47 @@ sql:
 
 ![image](https://github.com/user-attachments/assets/f2d3b804-1d6b-4855-a903-05940b8606a8)
 
+____________________________________________________________________________________________________________________________________________________________________________________________________________________________
+## ![image](https://github.com/user-attachments/assets/215906b0-5f49-48b8-8101-585fc2967a44) Creación de Dashboard SUPERSET
+____________________________________________________________________________________________________________________________________________________________________________________________________________________________
+ Hacemos click en el puerto 8088 de docker desktop ó abrimos el navegador y escribimos localhost:8088, se abrira la vetana de superset y ahí, vamos al simbolo + en la esquina superior izquierda, hacemos click y, seleccionamos **database connections*
+ 
+![image](https://github.com/user-attachments/assets/be1fbe81-c9ab-4812-b4ac-9ffcdfb81abd)
+
+Luego en el mismo símbolo más de la esquina derecha has click en cocnnect a database, Y aparecerá una ventana emergente.
+
+![image](https://github.com/user-attachments/assets/b81ea9ac-d868-4562-9160-dcf53abe37d7)
+
+y tendrán que pasar los siguientes datos:
+
+✅ Configuración CORRECTA para Conectar Superset a PostgreSQL
+
+Llena los campos así:
+
+| Campo | Valor CORRECTO |
+|-------|----------------|
+| Host | postgres |
+| Port | 5432 |
+| Database | name	smartgrid |
+| Username | admin |
+| Password | admin |
+| Display Name | Smart Grid PostgreSQL |
+| SSL | Desactivado/Disabled |
 
 
-![image]()
+🔍 Explicación de cada campo
 
-![image]()
+| Campo | Valor | Por qué |
+|-------|-------|---------|
+| Host | postgres | Es el nombre del servicio en Docker, NO localhost |
+| Port | 5432 | Es el puerto por defecto de PostgreSQL (NO 54325432) |
+| Database name |	smartgrid | Es la base de datos con tus datos (NO "Smart Grid PostgreSQL") |
+| Username | admin | El usuario que creaste en docker-compose.yml |
+| Password | admin | La contraseña del usuario admin |
+| Display Name | Smart Grid PostgreSQL | El nombre que verás en Superset (puede ser cualquier cosa) |
 
-![image]()
+Luego hacemos click en CREATE DATASET y, llenamos los datos correspondientes para crear el panel de control con indicadores claves de desempeño.
 
-![image]()
+![image](https://github.com/user-attachments/assets/c90cddf6-082e-4cb5-89e7-6435a0a4214e)
+
+
