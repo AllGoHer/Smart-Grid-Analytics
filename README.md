@@ -28,7 +28,7 @@ ________________________________________________________________________________
 ________________________________________________________________________________________________________________________________________________________________________________________________________________
 Es un Productor con **Física Real**, es el componente fundamental que simula una red de sensores IoT en una smart grid. Su diseño está inspirado en arquitecturas reales de ingestión de datos en el sector energético .
 
-Código: ![smart_grid_producer.py]()
+Código: [smart_grid_producer.py](https://github.com/AllGoHer/Smart-Grid-Analytics/blob/main/producer/smart_grid_producer.py)
  
 ________________________________________________________________________________________________________________________________________________________________________________________________________________
 ## 🎯 Propósito y Diseño
