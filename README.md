@@ -30,7 +30,7 @@ Es un Productor con **Física Real**, es el componente fundamental que simula un
 
 Código: [smart_grid_producer.py](https://github.com/AllGoHer/Smart-Grid-Analytics/blob/main/producer/smart_grid_producer.py)
 
-
+_____________________________________________________________________________________________________________
 #### 🧠 1. La Física del Sistema Eléctrico (El "Por qué" de las matemáticas)**
 
 En la vida real, un sensor no genera datos al azar. La red eléctrica tiene inercia. El sol no se oculta y aparece mágicamente de un segundo a otro; la temperatura no cambia de golpe. Este código simula eso con fórmulas matemáticas:
@@ -45,7 +45,7 @@ En la vida real, un sensor no genera datos al azar. La red eléctrica tiene iner
 
 * **Precio (<mark>price_output</mark>):** Calcula el precio dinámico basándose en la Ley de Oferta y Demanda. Si la demanda (potencia) sube, el precio sube. Si hay mucha energía renovable (solar + viento), el precio baja. Si es "Hora Punta" (5 p.m. a 10 p.m.), se le suma un recargo.
 
-
+________________________________________________________________________________________________________
 #### ⚡ 2. Lógica de Negocio: El Detección de Fallas (<mark>compute_fault</mark>)
 
 En lugar de simplemente asignar un número al azar del 0 al 3, este código analiza la telemetría de la red para determinar la causa raíz del fallo:
@@ -58,7 +58,7 @@ En lugar de simplemente asignar un número al azar del 0 al 3, este código anal
   
 * **<mark>-10 <= voltage_fluct < -5</mark>:** Una caída menor al 10% es solo una "caída de tensión" (Voltage Drop).
 
-
+______________________________________________________________________________________________________
 #### ⚙️ 3. El Orquestador del Evento (<mark>generate_data</mark>)**
 
 Esta función es el corazón del código. No solo genera datos, sino que aplica física eléctrica real:
@@ -71,7 +71,7 @@ Esta función es el corazón del código. No solo genera datos, sino que aplica 
 
 **4. Actualización de Estado:** Al final, actualiza todas las variables <mark>prev_XXX</mark>. Esto es lo que permite calcular el <mark>power_spike</mark> del siguiente evento.
 
-
+___________________________________________________________________________________________________
 #### 🛡️ 4. Resiliencia de Producción (<mark>create_producer</mark> y <mark>codecs</mark>)**
 
 * **El problema de Windows:** En Windows, la consola por defecto usa codificación ASCII. Si el código intenta imprimir un emoji (como ✅), el proceso explota. El código detecta si está en Windows (<mark>sys.platform == 'win32'</mark>) y fuerza la codificación a UTF-8 puro usando <mark>codecs.getwriter</mark>. Esto demuestra anticipación de problemas de despliegue.
@@ -80,10 +80,10 @@ Esta función es el corazón del código. No solo genera datos, sino que aplica 
   
 * **Manejo de Errores en Tiempo Real:** Si un evento falla al enviarse, captura la excepción, devuelve <mark>None</mark>, actualiza un contador de errores, y el programa sigue ejecutándose. El dashboard simplemente no recibirá ese punto de datos, pero la red eléctrica simulada no se detiene.
 
-  
+____________________________________________________________________________________________________ 
 #### 📊 5. Monitoreo de la Aplicación
-En lugar de usar simples print(), usa el módulo logging y escribe tanto en consola como en un archivo .log.
-Además, crea la función print_metrics() que se ejecuta cada 10 eventos para mostrar la tasa de error en tiempo real.
+En lugar de usar simples <mark>print()</mark>, usa el módulo <mark>logging</mark> y escribe tanto en consola como en un archivo <mark>.log.</mark>
+Además, crea la función <mark>print_metrics()</mark> que se ejecuta cada 10 eventos para mostrar la tasa de error en tiempo real.
 ________________________________________________________________________________________________________________________________________________________________________________________________________________
 ## 🎯 Propósito y Diseño
 ________________________________________________________________________________________________________________________________________________________________________________________________________________
